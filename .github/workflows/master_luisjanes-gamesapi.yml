@@ -43,11 +43,8 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: change the current directory
-        run: cd GamesApi
-
       - name: Update database
-        run: dotnet ef database update
+        run: dotnet ef database update --version GamesApi
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
