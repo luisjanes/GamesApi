@@ -42,11 +42,9 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
-      - name: Create Migration
-        run: dotnet ef migrations add NewMigration
 
       - name: Update database
-        run: dotnet ef database update --version GamesApi
+        run: dotnet ef database update --version /home/runner/work/GamesApi/GamesApi/GamesApi
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
