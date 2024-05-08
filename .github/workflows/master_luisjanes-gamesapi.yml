@@ -44,7 +44,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Changing path
-        run: cd /home/runner/work/GamesApi/GamesApi
+        run: cd /home/runner/work/GamesApi/GamesApi/GamesApi
 
       - name: Update database
         run: dotnet ef database update
