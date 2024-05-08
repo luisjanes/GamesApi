@@ -25,6 +25,18 @@ jobs:
           dotnet-version: "8.x"
           include-prerelease: true
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+
+      - name: Get Current IP Address
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Add IP address to SQL Server
+        run: az sql server firewall-rule create --resource-group ploomes-demo --server ploomes-server-games --name ghactions --start-ip-address ${{steps.ip.outputs.ipv4}} --end-ip-address ${{steps.ip.outputs.ipv4}}
+
       - name: Install Ef tools
         run: dotnet tool install --global dotnet-ef
 
@@ -57,13 +69,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
-
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_39838913271F4E1BB3794E91926E0641 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D0EACADD61A44C28B0A72340C61EC30B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3D227D7B50D24D76A082076B25A27D13 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
