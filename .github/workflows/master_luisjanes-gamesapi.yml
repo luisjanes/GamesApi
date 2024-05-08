@@ -25,6 +25,13 @@ jobs:
           dotnet-version: "8.x"
           include-prerelease: true
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_39838913271F4E1BB3794E91926E0641 }}
+          tenant-id: ${{ secrets.AZURE_TENANT_3D227D7B50D24D76A082076B25A27D13 }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_D0EACADD61A44C28B0A72340C61EC30B }}
+
       - name: Install Ef tools
         run: dotnet tool install --global dotnet-ef
 
