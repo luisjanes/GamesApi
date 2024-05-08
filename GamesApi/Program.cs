@@ -17,6 +17,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapControllers();
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World! Este é um teste para a Ploomes :)");
 
 app.Run();
