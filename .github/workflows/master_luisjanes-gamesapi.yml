@@ -43,6 +43,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: change the current directory
+        run: cd GamesApi
+
       - name: Update database
         run: dotnet ef database update
 
