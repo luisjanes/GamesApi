@@ -1,6 +1,6 @@
 ﻿using GamesApi.Data;
+using GamesApi.Dtos;
 using GamesApi.Models;
-using GamesApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,39 +16,47 @@ namespace GamesApi.Controllers
             _gamesDataContext = gamesDataContext;
         }
 
-        [HttpGet("/games")]
-        public async Task<ActionResult<ResultViewModel<List<Game>>>> GetGames()   
+        [HttpGet("/games/{pageNumber:int}/{pageSize:int}")]
+        public async Task<ActionResult<PagedDto>> GetGames(int pageNumber, int pageSize)   
         {
             try
             {
-                var games = await _gamesDataContext.Games.OrderBy(x=>x.Name).ToListAsync();
-                return Ok(new ResultViewModel<List<Game>>(games));
+                var count = await _gamesDataContext.Games.CountAsync();
+                if (pageSize * pageNumber > count)
+                {
+                    return StatusCode(400, new ResultDto<string>("Página não existente"));
+                }
+
+                var games = await _gamesDataContext.Games.OrderBy(x=>x.Name).Skip(pageSize*pageNumber).Take(pageSize).ToListAsync();
+                var remainingPages = (count / pageSize + (count % pageSize != 0 ? 1 : 0)) - (pageNumber + 1);
+
+                return Ok(new PagedDto(pageNumber,count,remainingPages,games,new List<string>()));
             }
             catch (Exception)
             {
-                return StatusCode(500, new ResultViewModel<string>("Erro interno"));
+                return StatusCode(500, new ResultDto<string>("Erro interno"));
             }
         }
         [HttpGet("/games/{id:int}")]
-        public async Task<ActionResult<ResultViewModel<Game>>> GetGamesById([FromRoute]int id)
+        public async Task<ActionResult<ResultDto<Game>>> GetGamesById([FromRoute]int id)
         {
             try
             {
                 var game = await _gamesDataContext.Games.FirstOrDefaultAsync(x => x.Id==id);
                 if(game == null)
                 {
-                    return NotFound(new ResultViewModel<Game>("Para o Id informado, não foi possível encontrar nenhum Jogo"));
+                    return NotFound(new ResultDto<Game>("Para o Id informado, não foi possível encontrar nenhum Jogo"));
                 }
-                return Ok(new ResultViewModel<Game>(game));
+                return Ok(new ResultDto<Game>(game));
             }
             catch (Exception)
             {
-                return StatusCode(500, new ResultViewModel<string>("Erro interno"));
+                return StatusCode(500, new ResultDto<string>("Erro interno"));
             }
         }
 
         [HttpPost("/games")]
-        public async Task<ActionResult<ResultViewModel<Game>>> PostGame([FromBody]GamePost model)
+        public async Task<ActionResult<ResultDto<Game>>> PostGame([FromBody]GamePostDto model)
         {
             try
             {
@@ -62,22 +70,22 @@ namespace GamesApi.Controllers
                 };
                 await _gamesDataContext.Games.AddAsync(game);
                 await _gamesDataContext.SaveChangesAsync();
-                return Ok(new ResultViewModel<Game>(game));
+                return Ok(new ResultDto<Game>(game));
             }
             catch (Exception)
             {
-                return StatusCode(500, new ResultViewModel<string>("Erro interno"));
+                return StatusCode(500, new ResultDto<string>("Erro interno"));
             }
         }
         [HttpPut("/games/{id:int}")]
-        public async Task<ActionResult<ResultViewModel<Game>>> PutAsync([FromRoute] int id, [FromBody] GamePost model)
+        public async Task<ActionResult<ResultDto<Game>>> PutAsync([FromRoute] int id, [FromBody] GamePostDto model)
         {
             try
             {
                 var game = await _gamesDataContext.Games.FirstOrDefaultAsync(x => x.Id == id);
                 if (game == null)
                 {
-                    return NotFound(new ResultViewModel<Game>("Para o Id informado, não foi possível encontrar nenhum Jogo"));
+                    return NotFound(new ResultDto<Game>("Para o Id informado, não foi possível encontrar nenhum Jogo"));
                 }
                 game.Name = model.Name;
                 game.Description = model.Description;
@@ -85,38 +93,38 @@ namespace GamesApi.Controllers
                 game.LaunchDate = model.LaunchDate;
                 _gamesDataContext.Update(game);
                 await _gamesDataContext.SaveChangesAsync();
-                return Ok(new ResultViewModel<Game>(game));
+                return Ok(new ResultDto<Game>(game));
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, new ResultViewModel<Game>("Erro no Banco de dados"));
+                return StatusCode(500, new ResultDto<Game>("Erro no Banco de dados"));
             }
             catch (Exception)
             {
-                return StatusCode(500, new ResultViewModel<Game>("Erro interno"));
+                return StatusCode(500, new ResultDto<Game>("Erro interno"));
             }
         }
         [HttpDelete("/games/{id:int}")]
-        public async Task<ActionResult<ResultViewModel<Game>>> DeleteAsync([FromRoute]int id)
+        public async Task<ActionResult<ResultDto<Game>>> DeleteAsync([FromRoute]int id)
         {
             try
             {
                 var game = await _gamesDataContext.Games.FirstOrDefaultAsync(y => y.Id == id);
                 if (game == null)
                 {
-                    return NotFound(new ResultViewModel<Game>("Para o Id informado, não foi possível encontrar nenhum Jogo"));
+                    return NotFound(new ResultDto<Game>("Para o Id informado, não foi possível encontrar nenhum Jogo"));
                 }
                 _gamesDataContext.Games.Remove(game);
                 await _gamesDataContext.SaveChangesAsync();
-                return Ok(new ResultViewModel<Game>(game));
+                return Ok(new ResultDto<Game>(game));
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, new ResultViewModel<Game>("Erro no Banco de dados"));
+                return StatusCode(500, new ResultDto<Game>("Erro no Banco de dados"));
             }
             catch (Exception)
             {
-                return StatusCode(500, new ResultViewModel<Game>("Erro interno"));
+                return StatusCode(500, new ResultDto<Game>("Erro interno"));
             }
         }
     }

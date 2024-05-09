@@ -1,21 +1,21 @@
-﻿namespace GamesApi.ViewModels
+﻿namespace GamesApi.Dtos
 {
-    public class ResultViewModel<T>
+    public class ResultDto<T>
     {
-        public ResultViewModel(T data, List<string> errors)
+        public ResultDto(T data, List<string> errors)
         {
             Data = data;
             Errors = errors;
         }
-        public ResultViewModel(T data)
+        public ResultDto(T data)
         {
             Data = data;
         }
-        public ResultViewModel(List<string> errors)
+        public ResultDto(List<string> errors)
         {
             Errors = errors;
         }
-        public ResultViewModel(string error)
+        public ResultDto(string error)
         {
             Errors.Add(error);
         }

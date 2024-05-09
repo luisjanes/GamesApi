@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GamesApi.ViewModels
+namespace GamesApi.Dtos
 {
-    public class GamePost
+    public class GamePostDto
     {
         [Required]
         public string Name { get; set; } = string.Empty;
