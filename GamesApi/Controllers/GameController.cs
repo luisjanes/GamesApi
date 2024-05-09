@@ -17,7 +17,7 @@ namespace GamesApi.Controllers
         }
 
         [HttpGet("/games")]
-        public async Task<IActionResult> GetGames()   
+        public async Task<ActionResult<ResultViewModel<List<Game>>>> GetGames()   
         {
             try
             {
@@ -30,7 +30,7 @@ namespace GamesApi.Controllers
             }
         }
         [HttpGet("/games/{id:int}")]
-        public async Task<IActionResult> GetGamesById([FromRoute]int id)
+        public async Task<ActionResult<ResultViewModel<Game>>> GetGamesById([FromRoute]int id)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace GamesApi.Controllers
         }
 
         [HttpPost("/games")]
-        public async Task<IActionResult> PostGame([FromBody]GamePost model)
+        public async Task<ActionResult<ResultViewModel<Game>>> PostGame([FromBody]GamePost model)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace GamesApi.Controllers
             }
         }
         [HttpPut("/games/{id:int}")]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] GamePost model)
+        public async Task<ActionResult<ResultViewModel<Game>>> PutAsync([FromRoute] int id, [FromBody] GamePost model)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace GamesApi.Controllers
             }
         }
         [HttpDelete("/games/{id:int}")]
-        public async Task<IActionResult> DeleteAsync([FromRoute]int id)
+        public async Task<ActionResult<ResultViewModel<Game>>> DeleteAsync([FromRoute]int id)
         {
             try
             {

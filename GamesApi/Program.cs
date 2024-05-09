@@ -11,11 +11,10 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.MapControllers();
 app.MapGet("/", () => "Hello World! Este é um teste para a Ploomes :)");
 
